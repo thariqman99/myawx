@@ -1,7 +1,7 @@
 ---
 - name: Update Kernel and Packages on Ubuntu
   hosts: all
-  become: yes
+  #become: yes
   tasks:
     - name: Update all packages to the latest version
       apt:
