@@ -1,0 +1,21 @@
+---
+- name: Check Disk Usage on Ubuntu
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Get disk usage
+      command: df -h /
+      register: disk_usage
+
+    - name: Show disk usage output
+      debug:
+        msg: "{{ disk_usage.stdout_lines }}"
+
+    - name: Check if disk usage exceeds threshold
+      shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+      register: usage
+
+    - name: Fail if usage is above 80%
+      fail:
+        msg: "Disk usage is above 80%! Current usage: {{ usage.stdout }}%"
+      when: usage.stdout|int > 80
