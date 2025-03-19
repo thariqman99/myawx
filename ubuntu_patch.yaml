@@ -1,0 +1,29 @@
+---
+- name: Update Kernel and Packages on Ubuntu
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update all packages to the latest version
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install the latest Linux kernel
+      apt:
+        name: linux-generic
+        state: latest
+
+    - name: Remove unused packages and clean up
+      apt:
+        autoremove: yes
+        autoclean: yes
+
+    - name: Check if a reboot is required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Display reboot message if needed
+      debug:
+        msg: "Reboot required!"
+      when: reboot_required.stat.exists
